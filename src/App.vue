@@ -295,8 +295,24 @@ export default {
 
       if (!name) return;
 
+      if (!/^[A-Za-z0-9 ]*$/.test(name)) {
+        window.alert("Please enter english name only");
+        return;
+      }
+
+      let formattedName = "";
+
+      formattedName += name[0].toUpperCase();
+      for (let i = 1; i < name.length; i++) {
+        if (name[i-1] == ' ') {
+          formattedName += name[i].toUpperCase();
+        } else {
+          formattedName += name[i];
+        }
+      }
+
       try {
-        await this.voteName(key, name);
+        await this.voteName(key, formattedName);
       } catch (err) {
         console.error(err);
         alert("Error");
