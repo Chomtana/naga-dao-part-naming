@@ -31,7 +31,7 @@
           <div class="card-body">
             <div class="voting-action-btn-container">
               <button :class="['btn', 'btn-success', rarityVote[parts[activePartIndex] + '_' + i] || rarityCount[parts[activePartIndex]] >= 20 ? 'disabled' : '']" @click="voteRarityOnClick(i)">+1</button>
-              <button :class="['btn', 'btn-success', formattedPartData[parts[activePartIndex] + '_' + i] && formattedPartData[parts[activePartIndex] + '_' + i].length ? 'disabled' : '']" @click="voteNameOnClick(i)">Name It</button>
+              <button :class="['btn', 'btn-success', formattedPartData[parts[activePartIndex] + '_' + i] && formattedPartData[parts[activePartIndex] + '_' + i].length ? '' : '']" @click="voteNameOnClick(i)">Name It</button>
             </div>
 
             <div v-if="formattedPartData[parts[activePartIndex] + '_' + i]">
