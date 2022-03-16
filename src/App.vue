@@ -23,7 +23,7 @@
       </div>
 
       <div class="voting-container">
-        <div class="voting-card card" v-for="i in variantCount" :key="i">
+        <div :class="['voting-card', 'card', (rarityCountKey[parts[activePartIndex] + '_' + i] > 2 ? 'highlight' : '')]" v-for="i in variantCount" :key="i">
           <div class="card-img-top voting-card-img-container">
             <img :src="buildPartImgSrc(j - 1, j == activePartIndex + 1 ? i : 1)" class="voting-card-img" v-for="j in activePartIndex + 1" :key="j">
           </div>
@@ -32,6 +32,10 @@
             <div class="voting-action-btn-container">
               <button :class="['btn', 'btn-success', rarityVote[parts[activePartIndex] + '_' + i] || rarityCount[parts[activePartIndex]] >= 20 ? 'disabled' : '']" @click="voteRarityOnClick(i)">+1</button>
               <button :class="['btn', 'btn-success', formattedPartData[parts[activePartIndex] + '_' + i] && formattedPartData[parts[activePartIndex] + '_' + i].length ? '' : '']" @click="voteNameOnClick(i)">Name It</button>
+            </div>
+
+            <div class="voting-name-container">
+              <div class="voting-name">{{rarityCountKey[parts[activePartIndex] + '_' + i] || 0}} Vote</div>
             </div>
 
             <div v-if="formattedPartData[parts[activePartIndex] + '_' + i]">
@@ -159,6 +163,11 @@ html, body {
   color: grey;
   font-size: 0.8rem;
 }
+
+.voting-card.highlight {
+  border: 3px solid darkgreen;
+  background: lightgreen;
+}
 </style>
 
 <script>
@@ -216,6 +225,7 @@ export default {
       rawRarityData: [],
       rarityVote: {},
       rarityCount: {},
+      rarityCountKey: {},
     };
   },
   async mounted() {
@@ -264,6 +274,23 @@ export default {
 
         this.rarityVote = rarityVote;
         this.rarityCount = rarityCount;
+      });
+
+      const q2 = query(collection(db, "part-rarity"));
+      const unsubscribe2 = onSnapshot(q2, (querySnapshot) => {
+        const rawRarityData = [];
+        querySnapshot.forEach((doc) => {
+          rawRarityData.push(doc.data());
+        });
+
+        let rarityCountKey = {};
+
+        for (let rarity of rawRarityData) {
+          if (!rarityCountKey[rarity.key]) rarityCountKey[rarity.key] = 0;
+          rarityCountKey[rarity.key]++;
+        }
+
+        this.rarityCountKey = rarityCountKey;
       });
     },
 
